@@ -33,36 +33,19 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">MaidEase</h1>
-            </div>
-            <nav className="flex space-x-4">
-              <a href="/auth/signin" className="text-gray-600 hover:text-gray-900">Login</a>
-              <a href="/auth/signin" className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
-                Sign Up
-              </a>
-            </nav>
-          </div>
-        </div>
-      </header>
-
+    <div className="bg-gray-50">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Professional Home Services
-          </h2>
+          </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
             Book trusted, verified maids for all your household needs. Quality service at your doorstep.
           </p>
           <a
             href="/services"
-            className="bg-white text-gray-900 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors"
+            className="bg-white text-gray-900 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
           >
             Book Now
           </a>
@@ -153,44 +136,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h5 className="text-lg font-semibold mb-4">MaidEase</h5>
-              <p className="text-gray-400">Professional home services at your doorstep</p>
-            </div>
-            <div>
-              <h5 className="text-lg font-semibold mb-4">Services</h5>
-              <ul className="space-y-2 text-gray-400">
-                <li>House Cleaning</li>
-                <li>Cooking</li>
-                <li>Laundry</li>
-                <li>Child Care</li>
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-lg font-semibold mb-4">Company</h5>
-              <ul className="space-y-2 text-gray-400">
-                <li>About Us</li>
-                <li>Contact</li>
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-lg font-semibold mb-4">Contact</h5>
-              <p className="text-gray-400">Email: support@maidservice.com</p>
-              <p className="text-gray-400">Phone: +91 9876543210</p>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 MaidEase. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

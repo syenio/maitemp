@@ -61,30 +61,19 @@ export default function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <button
-                onClick={() => router.back()}
-                className="mr-4 p-2 hover:bg-gray-100 rounded-full"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <h1 className="text-2xl font-bold text-gray-900">Our Services</h1>
-            </div>
-            <nav className="flex space-x-4">
-              <a href="/auth/signin" className="text-gray-600 hover:text-gray-900">Login</a>
-              <a href="/auth/signin" className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
-                Sign Up
-              </a>
-            </nav>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <div className="flex items-center">
+            <button
+              onClick={() => router.back()}
+              className="mr-4 p-2 hover:bg-gray-100 rounded-full"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-3xl font-bold text-gray-900">Our Services</h1>
           </div>
         </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Category Filter */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2">

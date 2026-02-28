@@ -2,14 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
-import { Calendar, Clock, MapPin, CreditCard, LogOut, Edit, X, MoreVertical } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { Calendar, Clock, MapPin, CreditCard, MessageSquare } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
+import { ReviewForm } from '@/components/ReviewForm';
 
 interface Booking {
   _id: string;
   service: {
     name: string;
     category: string;
+  };
+  serviceProvider?: {
+    name: string;
+    rating: number;
   };
   scheduledDate: string;
   scheduledTime: string;
@@ -23,6 +29,7 @@ interface Booking {
     zipCode: string;
   };
   createdAt: string;
+  isReviewSubmitted: boolean;
 }
 
 export default function DashboardPage() {
@@ -30,6 +37,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [cancelReason, setCancelReason] = useState('');
   const [rescheduleData, setRescheduleData] = useState({
@@ -74,10 +82,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/' });
-  };
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800';
@@ -97,28 +101,34 @@ export default function DashboardPage() {
     }
   };
 
-  const canCancelBooking = (booking: Booking) => {
-    if (booking.status === 'completed' || booking.status === 'cancelled') {
-      return false;
+  const handleReviewSubmit = async (reviewData: any) => {
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': session!.user.id,
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (response.ok) {
+        await fetchBookings(); // Refresh bookings
+        setShowReviewModal(false);
+        setSelectedBooking(null);
+        alert('Review submitted successfully');
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to submit review');
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Error submitting review');
     }
-    
-    const scheduledDateTime = new Date(`${booking.scheduledDate}T${booking.scheduledTime}`);
-    const now = new Date();
-    const hoursDifference = (scheduledDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-    
-    return hoursDifference > 2; // Can cancel if more than 2 hours away
   };
 
-  const canRescheduleBooking = (booking: Booking) => {
-    if (booking.status === 'completed' || booking.status === 'cancelled') {
-      return false;
-    }
-    
-    const scheduledDateTime = new Date(`${booking.scheduledDate}T${booking.scheduledTime}`);
-    const now = new Date();
-    const hoursDifference = (scheduledDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
-    
-    return hoursDifference > 4; // Can reschedule if more than 4 hours away
+  const canReview = (booking: Booking) => {
+    return booking.status === 'completed' && !booking.isReviewSubmitted;
   };
 
   const handleCancelBooking = async () => {
@@ -199,32 +209,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-600">Welcome, {session.user?.name}</span>
-              <button
-                onClick={() => router.push('/profile')}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex items-center text-gray-600 hover:text-red-600"
-              >
-                <LogOut className="w-4 h-4 mr-1" />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600 mt-2">Welcome back, {session.user?.name}</p>
+        </div>
         {/* Quick Actions */}
         <div className="mb-8">
           <div className="flex space-x-4">
@@ -291,8 +281,24 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   
-                  <div className="mt-4 pt-4 border-t text-xs text-gray-500">
-                    Booked on {new Date(booking.createdAt).toLocaleDateString()}
+                  <div className="mt-4 pt-4 border-t flex justify-between items-center">
+                    <div className="text-xs text-gray-500">
+                      Booked on {new Date(booking.createdAt).toLocaleDateString()}
+                    </div>
+                    <div className="flex space-x-2">
+                      {canReview(booking) && (
+                        <button
+                          onClick={() => {
+                            setSelectedBooking(booking);
+                            setShowReviewModal(true);
+                          }}
+                          className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                        >
+                          <MessageSquare className="w-4 h-4 mr-1" />
+                          Write Review
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -300,6 +306,24 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* Review Modal */}
+      <Modal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        title="Write a Review"
+        size="lg"
+      >
+        {selectedBooking && (
+          <ReviewForm
+            bookingId={selectedBooking._id}
+            serviceName={selectedBooking.service.name}
+            serviceProviderName={selectedBooking.serviceProvider?.name || 'Service Provider'}
+            onSubmit={handleReviewSubmit}
+            onCancel={() => setShowReviewModal(false)}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

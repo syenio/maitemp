@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Users, Calendar, DollarSign, Star, Plus, Edit, Trash2 } from 'lucide-react';
+import { Users, Calendar, DollarSign, Star, Plus, Edit, Trash2, MessageSquare, UserCheck, Settings } from 'lucide-react';
 
 interface Service {
   _id: string;
@@ -158,6 +158,8 @@ export default function AdminDashboard() {
               { id: 'services', label: 'Services' },
               { id: 'users', label: 'Users' },
               { id: 'bookings', label: 'Bookings' },
+              { id: 'providers', label: 'Service Providers' },
+              { id: 'reviews', label: 'Reviews' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -522,6 +524,131 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* Service Providers Tab */}
+        {activeTab === 'providers' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Service Providers</h2>
+              <button
+                onClick={() => router.push('/admin/service-providers')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 flex items-center"
+              >
+                <UserCheck className="w-4 h-4 mr-2" />
+                Manage Providers
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <UserCheck className="h-8 w-8 text-blue-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Providers</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Settings className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Active</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Star className="h-8 w-8 text-yellow-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Avg Rating</p>
+                    <p className="text-2xl font-bold text-gray-900">0.0</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6 text-center">
+              <UserCheck className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Service Providers Yet</h3>
+              <p className="text-gray-500 mb-4">Start by adding service providers to your platform.</p>
+              <button
+                onClick={() => router.push('/admin/service-providers')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+              >
+                Manage Service Providers
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Reviews & Ratings</h2>
+              <button
+                onClick={() => router.push('/admin/reviews')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 flex items-center"
+              >
+                <MessageSquare className="w-4 h-4 mr-2" />
+                Manage Reviews
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <MessageSquare className="h-8 w-8 text-blue-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Reviews</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Star className="h-8 w-8 text-yellow-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">5 Star Reviews</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Star className="h-8 w-8 text-red-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Low Ratings</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Star className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Avg Rating</p>
+                    <p className="text-2xl font-bold text-gray-900">0.0</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6 text-center">
+              <MessageSquare className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Reviews Yet</h3>
+              <p className="text-gray-500 mb-4">Reviews will appear here once customers start rating services.</p>
+              <button
+                onClick={() => router.push('/admin/reviews')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+              >
+                Manage Reviews
+              </button>
             </div>
           </div>
         )}
