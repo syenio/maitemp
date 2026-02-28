@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/maid-booking', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+// Connect to MongoDB using environment variable
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
 });
 
 const ServiceSchema = new mongoose.Schema({

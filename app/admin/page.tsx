@@ -24,6 +24,20 @@ interface User {
   createdAt: string;
 }
 
+interface ServiceProvider {
+  _id: string;
+  name: string;
+  email: string;
+  phone: string;
+  services: any[];
+  experience: number;
+  rating: number;
+  totalReviews: number;
+  isVerified: boolean;
+  isActive: boolean;
+  createdAt: string;
+}
+
 interface Booking {
   _id: string;
   user: {
@@ -46,6 +60,7 @@ export default function AdminDashboard() {
   const [services, setServices] = useState<Service[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [serviceProviders, setServiceProviders] = useState<ServiceProvider[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const router = useRouter();
@@ -115,6 +130,15 @@ export default function AdminDashboard() {
         const bookingsData = await bookingsResponse.json();
         setBookings(bookingsData.bookings || []);
       }
+
+      // Fetch service providers
+      const providersResponse = await fetch('/api/admin/service-providers', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (providersResponse.ok) {
+        const providersData = await providersResponse.json();
+        setServiceProviders(providersData.providers || []);
+      }
     } catch (error) {
       console.error('Error fetching admin data:', error);
     } finally {
@@ -137,6 +161,8 @@ export default function AdminDashboard() {
       booking.paymentStatus === 'paid' ? sum + booking.totalAmount : sum, 0
     ),
     activeServices: services.filter(s => s.isActive).length,
+    totalProviders: serviceProviders.length,
+    verifiedProviders: serviceProviders.filter(p => p.isVerified).length,
   };
 
   if (loading) {
@@ -566,7 +592,7 @@ export default function AdminDashboard() {
                   <UserCheck className="h-8 w-8 text-blue-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Total Providers</p>
-                    <p className="text-2xl font-bold text-gray-900">0</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalProviders}</p>
                   </div>
                 </div>
               </div>
@@ -574,8 +600,8 @@ export default function AdminDashboard() {
                 <div className="flex items-center">
                   <Settings className="h-8 w-8 text-green-600" />
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Active</p>
-                    <p className="text-2xl font-bold text-gray-900">0</p>
+                    <p className="text-sm font-medium text-gray-500">Verified</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.verifiedProviders}</p>
                   </div>
                 </div>
               </div>
@@ -584,23 +610,100 @@ export default function AdminDashboard() {
                   <Star className="h-8 w-8 text-yellow-600" />
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Avg Rating</p>
-                    <p className="text-2xl font-bold text-gray-900">0.0</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {serviceProviders.length > 0 
+                        ? (serviceProviders.reduce((sum, p) => sum + p.rating, 0) / serviceProviders.length).toFixed(1)
+                        : '0.0'
+                      }
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6 text-center">
-              <UserCheck className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No Service Providers Yet</h3>
-              <p className="text-gray-500 mb-4">Start by adding service providers to your platform.</p>
-              <button
-                onClick={() => router.push('/admin/service-providers')}
-                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
-              >
-                Manage Service Providers
-              </button>
-            </div>
+            {serviceProviders.length > 0 ? (
+              <div className="bg-white rounded-lg shadow overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Provider
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Experience
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Rating
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Joined
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {serviceProviders.map((provider) => (
+                      <tr key={provider._id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{provider.name}</div>
+                            <div className="text-sm text-gray-500">{provider.services.length} services</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{provider.email}</div>
+                          <div className="text-sm text-gray-500">{provider.phone}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {provider.experience} years
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                            <span className="text-sm text-gray-900">{provider.rating.toFixed(1)}</span>
+                            <span className="text-sm text-gray-500 ml-1">({provider.totalReviews})</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex flex-col space-y-1">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              provider.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {provider.isVerified ? 'Verified' : 'Pending'}
+                            </span>
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              provider.isActive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              {provider.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(provider.createdAt).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow p-6 text-center">
+                <UserCheck className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Service Providers Yet</h3>
+                <p className="text-gray-500 mb-4">Start by adding service providers to your platform.</p>
+                <button
+                  onClick={() => router.push('/admin/service-providers')}
+                  className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+                >
+                  Manage Service Providers
+                </button>
+              </div>
+            )}
           </div>
         )}
 
