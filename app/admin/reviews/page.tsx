@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
+import { colors } from '@/lib/colors';
 import { ReviewCard } from '@/components/ReviewCard';
 
 interface Review {
@@ -328,7 +329,12 @@ export default function ReviewsManagementPage() {
                 value={adminResponse}
                 onChange={(e) => setAdminResponse(e.target.value)}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{
+                  backgroundColor: colors.background.primary,
+                  color: colors.text.primary,
+                  borderColor: colors.border.medium,
+                }}
                 placeholder="Write your response to this review..."
                 maxLength={500}
               />

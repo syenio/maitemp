@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { colors, colorStyles } from '@/lib/colors';
 
-export default function SignInPage() {
+export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -32,10 +32,10 @@ export default function SignInPage() {
               MaidEase
             </h1>
             <h2 className="text-3xl font-extrabold" style={colorStyles.textPrimary}>
-              Sign In
+              Welcome Back
             </h2>
             <p className="mt-2 text-sm" style={colorStyles.textSecondary}>
-              Access your account to manage bookings and services
+              Sign in to your account to continue
             </p>
           </div>
         </div>

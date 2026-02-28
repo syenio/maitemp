@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Clock, ArrowLeft } from 'lucide-react';
+import { colors } from '@/lib/colors';
 
 interface Service {
   _id: string;
@@ -53,7 +54,7 @@ export default function ServicesPage() {
 
   const handleBookService = (serviceId: string) => {
     if (!session) {
-      router.push('/auth/signin');
+      router.push('/auth/login');
       return;
     }
     router.push(`/booking/${serviceId}`);
@@ -81,11 +82,21 @@ export default function ServicesPage() {
               <button
                 key={category.value}
                 onClick={() => setSelectedCategory(category.value)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategory === category.value
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
-                }`}
+                className="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: selectedCategory === category.value ? colors.primary[950] : colors.background.primary,
+                  color: selectedCategory === category.value ? colors.text.inverse : colors.text.secondary,
+                }}
+                onMouseEnter={(e) => {
+                  if (selectedCategory !== category.value) {
+                    e.currentTarget.style.backgroundColor = colors.background.secondary;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (selectedCategory !== category.value) {
+                    e.currentTarget.style.backgroundColor = colors.background.primary;
+                  }
+                }}
               >
                 {category.label}
               </button>
@@ -123,7 +134,13 @@ export default function ServicesPage() {
                   
                   <button
                     onClick={() => handleBookService(service._id)}
-                    className="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors font-medium"
+                    className="w-full py-2 px-4 rounded-md transition-colors font-medium"
+                    style={{ 
+                      backgroundColor: colors.primary[950],
+                      color: colors.text.inverse,
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary[800]}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary[950]}
                   >
                     Book Now
                   </button>

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
+import { colors } from '@/lib/colors';
 
 interface Booking {
   _id: string;
@@ -273,7 +274,12 @@ export default function ServiceProviderDashboard() {
               value={statusUpdate.workNotes}
               onChange={(e) => setStatusUpdate({ ...statusUpdate, workNotes: e.target.value })}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              style={{
+                backgroundColor: colors.background.primary,
+                color: colors.text.primary,
+                borderColor: colors.border.medium,
+              }}
               placeholder="Add any notes about the service..."
             />
           </div>

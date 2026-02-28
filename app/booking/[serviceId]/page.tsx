@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ArrowLeft, Calendar, Clock, MapPin } from 'lucide-react';
+import { colors } from '@/lib/colors';
 
 interface Service {
   _id: string;
@@ -44,7 +45,7 @@ export default function BookingPage() {
     if (status === 'loading') return;
     
     if (!session) {
-      router.push('/auth/signin');
+      router.push('/auth/login');
       return;
     }
 
@@ -288,7 +289,12 @@ export default function BookingPage() {
                     name="scheduledDate"
                     required
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{
+                      backgroundColor: colors.background.primary,
+                      color: colors.text.primary,
+                      borderColor: colors.border.medium,
+                    }}
                     value={bookingData.scheduledDate}
                     onChange={handleInputChange}
                   />
@@ -303,7 +309,12 @@ export default function BookingPage() {
                     type="time"
                     name="scheduledTime"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{
+                      backgroundColor: colors.background.primary,
+                      color: colors.text.primary,
+                      borderColor: colors.border.medium,
+                    }}
                     value={bookingData.scheduledTime}
                     onChange={handleInputChange}
                   />
@@ -321,7 +332,12 @@ export default function BookingPage() {
                     name="address.street"
                     placeholder="Street Address"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{
+                      backgroundColor: colors.background.primary,
+                      color: colors.text.primary,
+                      borderColor: colors.border.medium,
+                    }}
                     value={bookingData.address.street}
                     onChange={handleInputChange}
                   />
@@ -331,7 +347,12 @@ export default function BookingPage() {
                       name="address.city"
                       placeholder="City"
                       required
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                      className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                      style={{
+                        backgroundColor: colors.background.primary,
+                        color: colors.text.primary,
+                        borderColor: colors.border.medium,
+                      }}
                       value={bookingData.address.city}
                       onChange={handleInputChange}
                     />
@@ -340,7 +361,12 @@ export default function BookingPage() {
                       name="address.state"
                       placeholder="State"
                       required
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                      className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                      style={{
+                        backgroundColor: colors.background.primary,
+                        color: colors.text.primary,
+                        borderColor: colors.border.medium,
+                      }}
                       value={bookingData.address.state}
                       onChange={handleInputChange}
                     />
@@ -350,7 +376,12 @@ export default function BookingPage() {
                     name="address.zipCode"
                     placeholder="ZIP Code"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{
+                      backgroundColor: colors.background.primary,
+                      color: colors.text.primary,
+                      borderColor: colors.border.medium,
+                    }}
                     value={bookingData.address.zipCode}
                     onChange={handleInputChange}
                   />
@@ -364,7 +395,12 @@ export default function BookingPage() {
                 <textarea
                   name="specialInstructions"
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{
+                    backgroundColor: colors.background.primary,
+                    color: colors.text.primary,
+                    borderColor: colors.border.medium,
+                  }}
                   placeholder="Any special requirements or instructions..."
                   value={bookingData.specialInstructions}
                   onChange={handleInputChange}

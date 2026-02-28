@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Rating } from '@/components/ui/Rating';
+import { colors } from '@/lib/colors';
 
 interface ReviewFormProps {
   bookingId: string;
@@ -119,7 +120,12 @@ export function ReviewForm({
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+          style={{
+            backgroundColor: colors.background.primary,
+            color: colors.text.primary,
+            borderColor: colors.border.medium,
+          }}
           placeholder="Share your experience with this service..."
           maxLength={1000}
           required

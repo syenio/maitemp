@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { FileUpload } from '@/components/FileUpload';
+import { colors } from '@/lib/colors';
 
 export default function ServiceProviderRegisterPage() {
   const [formData, setFormData] = useState({
@@ -243,7 +244,12 @@ export default function ServiceProviderRegisterPage() {
                     value={formData.bio}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    style={{
+                      backgroundColor: colors.background.primary,
+                      color: colors.text.primary,
+                      borderColor: colors.border.medium,
+                    }}
                     placeholder="Tell us about yourself and your experience..."
                   />
                 </div>

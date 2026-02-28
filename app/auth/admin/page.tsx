@@ -167,10 +167,10 @@ export default function AdminLoginPage() {
           <div className="text-center">
             <button
               type="button"
-              onClick={() => router.push('/auth/signin')}
+              onClick={() => router.push('/')}
               className="text-sm text-gray-600 hover:text-gray-900 underline"
             >
-              Back to User Login
+              ← Back to Home
             </button>
           </div>
         </form>

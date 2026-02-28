@@ -14,6 +14,7 @@ import {
   Clock,
   Users
 } from 'lucide-react';
+import { colors, colorCombinations } from '@/lib/colors';
 
 export function Footer() {
   const pathname = usePathname();
@@ -79,20 +80,20 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer style={{ backgroundColor: colors.primary[950], color: colors.text.inverse }}>
       {/* Features Section */}
-      <div className="border-b border-gray-800">
+      <div className="border-b" style={{ borderColor: colors.primary[800] }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div key={index} className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-800 rounded-lg mb-4">
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg mb-4" style={{ backgroundColor: colors.primary[800] }}>
+                    <Icon className="w-6 h-6" style={{ color: colors.text.inverse }} />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-400 text-sm">{feature.description}</p>
+                  <h3 className="text-lg font-semibold mb-2" style={{ color: colors.text.inverse }}>{feature.title}</h3>
+                  <p className="text-sm" style={{ color: colors.primary[400] }}>{feature.description}</p>
                 </div>
               );
             })}
@@ -106,8 +107,8 @@ export function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-4">MaidEase</h2>
-              <p className="text-gray-400 mb-6 max-w-md">
+              <h2 className="text-2xl font-bold mb-4" style={{ color: colors.text.inverse }}>Maids for Care</h2>
+              <p className="mb-6 max-w-md" style={{ color: colors.primary[400] }}>
                 Professional home services at your doorstep. We connect you with verified, 
                 trusted service providers for all your household needs.
               </p>
@@ -116,16 +117,16 @@ export function Footer() {
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-300">support@maidease.com</span>
+                <Mail className="w-5 h-5" style={{ color: colors.primary[400] }} />
+                <span style={{ color: colors.primary[300] }}>support@maidease.com</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-300">+91 9876543210</span>
+                <Phone className="w-5 h-5" style={{ color: colors.primary[400] }} />
+                <span style={{ color: colors.primary[300] }}>+91 9876543210</span>
               </div>
               <div className="flex items-center space-x-3">
-                <MapPin className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-300">Mumbai, Maharashtra, India</span>
+                <MapPin className="w-5 h-5" style={{ color: colors.primary[400] }} />
+                <span style={{ color: colors.primary[300] }}>Mumbai, Maharashtra, India</span>
               </div>
             </div>
 
@@ -143,7 +144,10 @@ export function Footer() {
                     key={index}
                     href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                    style={{ backgroundColor: colors.primary[800] }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary[700]}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary[800]}
                   >
                     <Icon className="w-5 h-5" />
                   </a>
@@ -154,13 +158,16 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Our Services</h3>
+            <h3 className="text-lg font-semibold mb-6" style={{ color: colors.text.inverse }}>Our Services</h3>
             <ul className="space-y-3">
               {serviceCategories.map((service, index) => (
                 <li key={index}>
                   <button
                     onClick={() => router.push('/services')}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                    className="transition-colors text-sm"
+                    style={{ color: colors.primary[400] }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = colors.text.inverse}
+                    onMouseLeave={(e) => e.currentTarget.style.color = colors.primary[400]}
                   >
                     {service}
                   </button>
@@ -171,13 +178,16 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Company</h3>
+            <h3 className="text-lg font-semibold mb-6" style={{ color: colors.text.inverse }}>Company</h3>
             <ul className="space-y-3">
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <button
                     onClick={() => router.push(link.href)}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                    className="transition-colors text-sm"
+                    style={{ color: colors.primary[400] }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = colors.text.inverse}
+                    onMouseLeave={(e) => e.currentTarget.style.color = colors.primary[400]}
                   >
                     {link.label}
                   </button>
@@ -188,13 +198,16 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="text-lg font-semibold mb-6">Support</h3>
+            <h3 className="text-lg font-semibold mb-6" style={{ color: colors.text.inverse }}>Support</h3>
             <ul className="space-y-3">
               {supportLinks.map((link, index) => (
                 <li key={index}>
                   <button
                     onClick={() => router.push(link.href)}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                    className="transition-colors text-sm"
+                    style={{ color: colors.primary[400] }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = colors.text.inverse}
+                    onMouseLeave={(e) => e.currentTarget.style.color = colors.primary[400]}
                   >
                     {link.label}
                   </button>
@@ -206,16 +219,22 @@ export function Footer() {
       </div>
 
       {/* Service Provider CTA */}
-      <div className="border-t border-gray-800">
+      <div className="border-t" style={{ borderColor: colors.primary[800] }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-gray-800 rounded-lg p-6 text-center">
-            <h3 className="text-xl font-semibold mb-2">Want to become a service provider?</h3>
-            <p className="text-gray-400 mb-4">
+          <div className="rounded-lg p-6 text-center" style={{ backgroundColor: colors.primary[800] }}>
+            <h3 className="text-xl font-semibold mb-2" style={{ color: colors.text.inverse }}>Want to become a service provider?</h3>
+            <p className="mb-4" style={{ color: colors.primary[400] }}>
               Join our network of trusted professionals and grow your business
             </p>
             <button
               onClick={() => router.push('/service-provider/register')}
-              className="bg-white text-gray-900 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              className="px-6 py-2 rounded-lg font-medium transition-colors"
+              style={{ 
+                backgroundColor: colors.text.inverse,
+                color: colors.primary[950],
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.background.secondary}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.text.inverse}
             >
               Join as Provider
             </button>
@@ -224,31 +243,55 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <div className="border-t" style={{ borderColor: colors.primary[800] }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
+            <div className="text-sm" style={{ color: colors.primary[400] }}>
               © {currentYear} MaidEase. All rights reserved.
             </div>
             
             <div className="flex items-center space-x-6 text-sm">
               <button
                 onClick={() => router.push('/terms')}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="transition-colors"
+                style={{ color: colors.primary[400] }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.text.inverse}
+                onMouseLeave={(e) => e.currentTarget.style.color = colors.primary[400]}
               >
                 Terms
               </button>
               <button
                 onClick={() => router.push('/privacy')}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="transition-colors"
+                style={{ color: colors.primary[400] }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.text.inverse}
+                onMouseLeave={(e) => e.currentTarget.style.color = colors.primary[400]}
               >
                 Privacy
               </button>
               <button
                 onClick={() => router.push('/cookies')}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="transition-colors"
+                style={{ color: colors.primary[400] }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.text.inverse}
+                onMouseLeave={(e) => e.currentTarget.style.color = colors.primary[400]}
               >
                 Cookies
+              </button>
+              <button
+                onClick={() => router.push('/auth/admin')}
+                className="transition-colors text-xs opacity-50"
+                style={{ color: colors.primary[600] }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = colors.primary[400];
+                  e.currentTarget.style.opacity = '1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = colors.primary[600];
+                  e.currentTarget.style.opacity = '0.5';
+                }}
+              >
+                Admin
               </button>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { colors, colorStyles } from '@/lib/colors';
 
-export default function SignInPage() {
+export default function RegisterPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -32,10 +32,10 @@ export default function SignInPage() {
               MaidEase
             </h1>
             <h2 className="text-3xl font-extrabold" style={colorStyles.textPrimary}>
-              Sign In
+              Create Account
             </h2>
             <p className="mt-2 text-sm" style={colorStyles.textSecondary}>
-              Access your account to manage bookings and services
+              Join MaidEase to book professional home services
             </p>
           </div>
         </div>
@@ -70,26 +70,30 @@ export default function SignInPage() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Continue with Google
+              Sign up with Google
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm" style={colorStyles.textSecondary}>
-              Don't have an account?{' '}
+              Already have an account?{' '}
               <button
-                onClick={() => router.push('/auth/register')}
+                onClick={() => router.push('/auth/login')}
                 className="font-medium underline transition-colors"
                 style={colorStyles.textPrimary}
                 onMouseEnter={(e) => e.currentTarget.style.color = colors.text.secondary}
                 onMouseLeave={(e) => e.currentTarget.style.color = colors.text.primary}
               >
-                Sign up here
+                Sign in here
               </button>
             </p>
           </div>
 
           <div className="text-center">
+            <p className="text-xs mb-4" style={colorStyles.textTertiary}>
+              By signing up, you agree to our Terms of Service and Privacy Policy
+            </p>
+            
             <button
               onClick={() => router.push('/')}
               className="text-sm underline transition-colors"

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Star, Users } from 'lucide-react';
+import { colors } from '@/lib/colors';
 
 interface Service {
   _id: string;
@@ -35,7 +36,7 @@ export default function HomePage() {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-20">
+      <section className="text-white py-20" style={{ background: `linear-gradient(to right, ${colors.primary[800]}, ${colors.primary[950]})` }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Professional Home Services
@@ -45,7 +46,13 @@ export default function HomePage() {
           </p>
           <a
             href="/services"
-            className="bg-white text-gray-900 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+            className="inline-block px-8 py-3 rounded-lg text-lg font-semibold transition-colors"
+            style={{ 
+              backgroundColor: colors.text.inverse,
+              color: colors.primary[950],
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.background.secondary}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.text.inverse}
           >
             Book Now
           </a>
@@ -56,43 +63,43 @@ export default function HomePage() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Us?</h3>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <h3 className="text-3xl font-bold mb-4" style={{ color: colors.text.primary }}>Why Choose Us?</h3>
+            <p className="max-w-2xl mx-auto" style={{ color: colors.text.secondary }}>
               We provide reliable, professional, and affordable home services with complete peace of mind.
             </p>
           </div>
           
           <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-gray-900" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: colors.background.secondary }}>
+                <Users className="w-8 h-8" style={{ color: colors.text.primary }} />
               </div>
               <h4 className="text-lg font-semibold mb-2">Verified Professionals</h4>
-              <p className="text-gray-600">All our maids are background verified and trained</p>
+              <p style={{ color: colors.text.secondary }}>All our maids are background verified and trained</p>
             </div>
             
             <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-8 h-8 text-gray-900" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: colors.background.secondary }}>
+                <Calendar className="w-8 h-8" style={{ color: colors.text.primary }} />
               </div>
               <h4 className="text-lg font-semibold mb-2">Flexible Scheduling</h4>
-              <p className="text-gray-600">Book services at your convenient time</p>
+              <p style={{ color: colors.text.secondary }}>Book services at your convenient time</p>
             </div>
             
             <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-gray-900" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: colors.background.secondary }}>
+                <Star className="w-8 h-8" style={{ color: colors.text.primary }} />
               </div>
               <h4 className="text-lg font-semibold mb-2">Quality Assured</h4>
-              <p className="text-gray-600">100% satisfaction guarantee on all services</p>
+              <p style={{ color: colors.text.secondary }}>100% satisfaction guarantee on all services</p>
             </div>
             
             <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-gray-900" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: colors.background.secondary }}>
+                <MapPin className="w-8 h-8" style={{ color: colors.text.primary }} />
               </div>
               <h4 className="text-lg font-semibold mb-2">Doorstep Service</h4>
-              <p className="text-gray-600">Services delivered right to your home</p>
+              <p style={{ color: colors.text.secondary }}>Services delivered right to your home</p>
             </div>
           </div>
         </div>
@@ -102,8 +109,8 @@ export default function HomePage() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h3>
-            <p className="text-gray-600">Choose from our wide range of professional home services</p>
+            <h3 className="text-3xl font-bold mb-4" style={{ color: colors.text.primary }}>Our Services</h3>
+            <p style={{ color: colors.text.secondary }}>Choose from our wide range of professional home services</p>
           </div>
           
           {loading ? (
@@ -119,7 +126,7 @@ export default function HomePage() {
                       <Clock className="w-4 h-4 mr-1" />
                       <span>{service.duration}h</span>
                     </div>
-                    <div className="text-2xl font-bold text-gray-900">₹{service.price}</div>
+                    <div className="text-2xl font-bold" style={{ color: colors.text.primary }}>₹{service.price}</div>
                   </div>
                 </div>
               ))}
@@ -129,7 +136,13 @@ export default function HomePage() {
           <div className="text-center mt-8">
             <a
               href="/services"
-              className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+              className="px-6 py-3 rounded-lg transition-colors"
+              style={{ 
+                backgroundColor: colors.primary[950],
+                color: colors.text.inverse,
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary[800]}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary[950]}
             >
               View All Services
             </a>
