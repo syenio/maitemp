@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Clock, ArrowLeft } from 'lucide-react';
+import { Clock, ArrowLeft, Search, MapPin } from 'lucide-react';
 import { colors } from '@/lib/colors';
 
 interface Service {
@@ -19,8 +19,11 @@ export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const categories = [
     { value: 'all', label: 'All Services' },
@@ -33,8 +36,13 @@ export default function ServicesPage() {
   ];
 
   useEffect(() => {
+    // Get search and location from URL parameters
+    const search = searchParams.get('search') || '';
+    const location = searchParams.get('location') || '';
+    setSearchQuery(search);
+    setSelectedLocation(location);
     fetchServices();
-  }, []);
+  }, [searchParams]);
 
   const fetchServices = async () => {
     try {
@@ -48,9 +56,18 @@ export default function ServicesPage() {
     }
   };
 
-  const filteredServices = selectedCategory === 'all' 
-    ? services 
-    : services.filter(service => service.category === selectedCategory);
+  const filteredServices = services.filter(service => {
+    // Filter by category
+    const categoryMatch = selectedCategory === 'all' || service.category === selectedCategory;
+    
+    // Filter by search query
+    const searchMatch = !searchQuery || 
+      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.category.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return categoryMatch && searchMatch;
+  });
 
   const handleBookService = (serviceId: string) => {
     if (!session) {
@@ -65,7 +82,7 @@ export default function ServicesPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <div className="flex items-center">
+          <div className="flex items-center mb-4">
             <button
               onClick={() => router.back()}
               className="mr-4 p-2 hover:bg-gray-100 rounded-full"
@@ -74,6 +91,50 @@ export default function ServicesPage() {
             </button>
             <h1 className="text-3xl font-bold text-gray-900">Our Services</h1>
           </div>
+          
+          {/* Search and Location Display */}
+          {(searchQuery || selectedLocation) && (
+            <div className="flex flex-wrap items-center gap-4 p-4 bg-white rounded-lg shadow-sm">
+              {searchQuery && (
+                <div className="flex items-center space-x-2">
+                  <Search className="w-4 h-4" style={{ color: colors.text.secondary }} />
+                  <span className="text-sm" style={{ color: colors.text.secondary }}>
+                    Searching for:
+                  </span>
+                  <span className="font-medium" style={{ color: colors.text.primary }}>
+                    "{searchQuery}"
+                  </span>
+                </div>
+              )}
+              {selectedLocation && (
+                <div className="flex items-center space-x-2">
+                  <MapPin className="w-4 h-4" style={{ color: colors.text.secondary }} />
+                  <span className="text-sm" style={{ color: colors.text.secondary }}>
+                    Location:
+                  </span>
+                  <span className="font-medium" style={{ color: colors.text.primary }}>
+                    {selectedLocation}
+                  </span>
+                </div>
+              )}
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedLocation('');
+                  router.push('/services');
+                }}
+                className="text-sm px-3 py-1 rounded-full transition-colors"
+                style={{ 
+                  color: colors.text.secondary,
+                  backgroundColor: colors.background.secondary,
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.background.primary}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.background.secondary}
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
         </div>
         {/* Category Filter */}
         <div className="mb-8">
@@ -152,7 +213,14 @@ export default function ServicesPage() {
 
         {!loading && filteredServices.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600">No services found in this category.</p>
+            {searchQuery ? (
+              <div>
+                <p className="text-gray-600 mb-2">No services found for "{searchQuery}"</p>
+                <p className="text-sm text-gray-500">Try searching with different keywords or browse all services</p>
+              </div>
+            ) : (
+              <p className="text-gray-600">No services found in this category.</p>
+            )}
           </div>
         )}
       </div>
