@@ -1,0 +1,305 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
+import { Calendar, Clock, MapPin, CreditCard, LogOut, Edit, X, MoreVertical } from 'lucide-react';
+
+interface Booking {
+  _id: string;
+  service: {
+    name: string;
+    category: string;
+  };
+  scheduledDate: string;
+  scheduledTime: string;
+  totalAmount: number;
+  status: string;
+  paymentStatus: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  createdAt: string;
+}
+
+export default function DashboardPage() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const [rescheduleData, setRescheduleData] = useState({
+    scheduledDate: '',
+    scheduledTime: '',
+    reason: '',
+  });
+  const [actionLoading, setActionLoading] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    fetchBookings();
+  }, [session, status, router]);
+
+  const fetchBookings = async () => {
+    if (!session?.user?.id) return;
+    
+    try {
+      const response = await fetch('/api/bookings', {
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': session.user.id,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setBookings(data.bookings || []);
+      }
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'completed': return 'bg-blue-100 text-blue-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'pending': return 'bg-yellow-100 text-yellow-800';
+      case 'failed': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const canCancelBooking = (booking: Booking) => {
+    if (booking.status === 'completed' || booking.status === 'cancelled') {
+      return false;
+    }
+    
+    const scheduledDateTime = new Date(`${booking.scheduledDate}T${booking.scheduledTime}`);
+    const now = new Date();
+    const hoursDifference = (scheduledDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    
+    return hoursDifference > 2; // Can cancel if more than 2 hours away
+  };
+
+  const canRescheduleBooking = (booking: Booking) => {
+    if (booking.status === 'completed' || booking.status === 'cancelled') {
+      return false;
+    }
+    
+    const scheduledDateTime = new Date(`${booking.scheduledDate}T${booking.scheduledTime}`);
+    const now = new Date();
+    const hoursDifference = (scheduledDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    
+    return hoursDifference > 4; // Can reschedule if more than 4 hours away
+  };
+
+  const handleCancelBooking = async () => {
+    if (!selectedBooking || !cancelReason.trim() || !session?.user?.id) return;
+    
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/bookings/${selectedBooking._id}/cancel`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': session.user.id,
+        },
+        body: JSON.stringify({ reason: cancelReason }),
+      });
+
+      if (response.ok) {
+        await fetchBookings(); // Refresh bookings
+        setShowCancelModal(false);
+        setSelectedBooking(null);
+        setCancelReason('');
+        alert('Booking cancelled successfully');
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      alert('Error cancelling booking');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRescheduleBooking = async () => {
+    if (!selectedBooking || !rescheduleData.scheduledDate || !rescheduleData.scheduledTime || !session?.user?.id) return;
+    
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/bookings/${selectedBooking._id}/reschedule`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': session.user.id,
+        },
+        body: JSON.stringify(rescheduleData),
+      });
+
+      if (response.ok) {
+        await fetchBookings(); // Refresh bookings
+        setShowRescheduleModal(false);
+        setSelectedBooking(null);
+        setRescheduleData({ scheduledDate: '', scheduledTime: '', reason: '' });
+        alert('Booking rescheduled successfully');
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to reschedule booking');
+      }
+    } catch (error) {
+      console.error('Error rescheduling booking:', error);
+      alert('Error rescheduling booking');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  if (status === 'loading' || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null; // Will redirect in useEffect
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <div className="flex items-center space-x-4">
+              <span className="text-gray-600">Welcome, {session.user?.name}</span>
+              <button
+                onClick={() => router.push('/profile')}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Profile
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center text-gray-600 hover:text-red-600"
+              >
+                <LogOut className="w-4 h-4 mr-1" />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <div className="flex space-x-4">
+            <button
+              onClick={() => router.push('/services')}
+              className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Book New Service
+            </button>
+          </div>
+        </div>
+
+        {/* Bookings */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Your Bookings</h2>
+          
+          {bookings.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <p className="text-gray-600 mb-4">You haven't made any bookings yet.</p>
+              <button
+                onClick={() => router.push('/services')}
+                className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800"
+              >
+                Book Your First Service
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {bookings.map((booking) => (
+                <div key={booking._id} className="bg-white rounded-lg shadow-md p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {booking.service.name}
+                      </h3>
+                      <p className="text-gray-600 capitalize">{booking.service.category}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
+                        {booking.status}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(booking.paymentStatus)}`}>
+                        {booking.paymentStatus}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {new Date(booking.scheduledDate).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 mr-2" />
+                      {booking.scheduledTime}
+                    </div>
+                    <div className="flex items-center">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {booking.address.city}, {booking.address.state}
+                    </div>
+                    <div className="flex items-center">
+                      <CreditCard className="w-4 h-4 mr-2" />
+                      ₹{booking.totalAmount}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t text-xs text-gray-500">
+                    Booked on {new Date(booking.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
