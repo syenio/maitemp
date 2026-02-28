@@ -35,7 +35,9 @@ export default function AdminLoginPage() {
       if (response.ok) {
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
-        router.push('/admin');
+        
+        // Use window.location for reliable redirect
+        window.location.href = '/admin';
       } else {
         setError(data.error || 'Admin login failed');
       }

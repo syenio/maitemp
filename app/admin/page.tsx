@@ -51,27 +51,43 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    // Ensure we're on the client side
+    if (typeof window === 'undefined') return;
     
-    if (!token || !userData) {
-      router.push('/auth/login');
-      return;
-    }
+    const checkAuth = () => {
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const userData = localStorage.getItem('adminUser') || localStorage.getItem('user');
+      
+      if (!token || !userData) {
+        router.replace('/auth/admin');
+        return;
+      }
 
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'admin') {
-      router.push('/dashboard');
-      return;
-    }
+      try {
+        const parsedUser = JSON.parse(userData);
+        
+        if (parsedUser.role !== 'admin') {
+          router.replace('/dashboard');
+          return;
+        }
 
-    setUser(parsedUser);
-    fetchData();
-  }, []);
+        setUser(parsedUser);
+        fetchData();
+      } catch (error) {
+        console.error('Admin page - Error parsing user data:', error);
+        router.replace('/auth/admin');
+      }
+    };
+
+    // Small delay to ensure localStorage is ready
+    const timeoutId = setTimeout(checkAuth, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [router]);
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
       
       // Fetch services
       const servicesResponse = await fetch('/api/admin/services', {
@@ -107,6 +123,8 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     router.push('/');
