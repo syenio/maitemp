@@ -50,6 +50,8 @@ const sampleProviders = [
     name: "Priya Sharma",
     email: "priya.sharma@example.com",
     phone: "+91-9876543210",
+    dateOfBirth: new Date('1990-05-15'),
+    gender: 'female',
     address: {
       street: "123 MG Road",
       city: "Mumbai",
@@ -64,6 +66,28 @@ const sampleProviders = [
     bio: "Experienced house cleaning professional with 5+ years of experience. Specializes in deep cleaning and eco-friendly products.",
     languages: ["Hindi", "English", "Marathi"],
     specializations: ["Deep Cleaning", "Kitchen Cleaning", "Bathroom Sanitization"],
+    verification: {
+      email: { isVerified: true, verifiedAt: new Date() },
+      phone: { isVerified: true, verifiedAt: new Date() },
+      panCard: { 
+        number: "ABCDE1234F",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      },
+      aadhar: { 
+        number: "1234-5678-9012",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      }
+    },
+    documents: {
+      profileImage: "https://ui-avatars.com/api/?name=Priya+Sharma&background=000&color=fff",
+    },
+    emergencyContact: {
+      name: "Raj Sharma",
+      phone: "+91-9876543211",
+      relation: "Husband"
+    },
     availability: {
       monday: { start: "09:00", end: "17:00", available: true },
       tuesday: { start: "09:00", end: "17:00", available: true },
@@ -78,6 +102,8 @@ const sampleProviders = [
     name: "Rajesh Kumar",
     email: "rajesh.kumar@example.com",
     phone: "+91-9876543211",
+    dateOfBirth: new Date('1985-08-22'),
+    gender: 'male',
     address: {
       street: "456 CP Road",
       city: "Delhi",
@@ -92,6 +118,28 @@ const sampleProviders = [
     bio: "Professional cook with expertise in North Indian and Continental cuisine. Available for daily cooking and special occasions.",
     languages: ["Hindi", "English", "Punjabi"],
     specializations: ["North Indian Cuisine", "Continental Food", "Meal Prep"],
+    verification: {
+      email: { isVerified: true, verifiedAt: new Date() },
+      phone: { isVerified: true, verifiedAt: new Date() },
+      panCard: { 
+        number: "FGHIJ5678K",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      },
+      aadhar: { 
+        number: "2345-6789-0123",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      }
+    },
+    documents: {
+      profileImage: "https://ui-avatars.com/api/?name=Rajesh+Kumar&background=000&color=fff",
+    },
+    emergencyContact: {
+      name: "Sunita Kumar",
+      phone: "+91-9876543212",
+      relation: "Wife"
+    },
     availability: {
       monday: { start: "08:00", end: "20:00", available: true },
       tuesday: { start: "08:00", end: "20:00", available: true },
@@ -106,6 +154,8 @@ const sampleProviders = [
     name: "Anita Patel",
     email: "anita.patel@example.com",
     phone: "+91-9876543212",
+    dateOfBirth: new Date('1988-12-10'),
+    gender: 'female',
     address: {
       street: "789 Brigade Road",
       city: "Bangalore",
@@ -120,6 +170,28 @@ const sampleProviders = [
     bio: "Certified childcare professional with 7+ years of experience. Trained in first aid and child development.",
     languages: ["English", "Hindi", "Gujarati", "Kannada"],
     specializations: ["Infant Care", "Toddler Activities", "Educational Games"],
+    verification: {
+      email: { isVerified: true, verifiedAt: new Date() },
+      phone: { isVerified: true, verifiedAt: new Date() },
+      panCard: { 
+        number: "KLMNO9012P",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      },
+      aadhar: { 
+        number: "3456-7890-1234",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      }
+    },
+    documents: {
+      profileImage: "https://ui-avatars.com/api/?name=Anita+Patel&background=000&color=fff",
+    },
+    emergencyContact: {
+      name: "Kiran Patel",
+      phone: "+91-9876543213",
+      relation: "Husband"
+    },
     availability: {
       monday: { start: "07:00", end: "19:00", available: true },
       tuesday: { start: "07:00", end: "19:00", available: true },
@@ -134,6 +206,8 @@ const sampleProviders = [
     name: "Meera Reddy",
     email: "meera.reddy@example.com",
     phone: "+91-9876543213",
+    dateOfBirth: new Date('1982-03-25'),
+    gender: 'female',
     address: {
       street: "321 Jubilee Hills",
       city: "Hyderabad",
@@ -148,6 +222,26 @@ const sampleProviders = [
     bio: "Compassionate elder care specialist with experience in medical assistance and companionship.",
     languages: ["Telugu", "English", "Hindi"],
     specializations: ["Elder Care", "Medical Assistance", "Companionship"],
+    verification: {
+      email: { isVerified: true, verifiedAt: new Date() },
+      phone: { isVerified: true, verifiedAt: new Date() },
+      panCard: { 
+        number: "QRSTU3456V",
+        isVerified: false
+      },
+      aadhar: { 
+        number: "4567-8901-2345",
+        isVerified: false
+      }
+    },
+    documents: {
+      profileImage: "https://ui-avatars.com/api/?name=Meera+Reddy&background=000&color=fff",
+    },
+    emergencyContact: {
+      name: "Ravi Reddy",
+      phone: "+91-9876543214",
+      relation: "Brother"
+    },
     availability: {
       monday: { start: "06:00", end: "22:00", available: true },
       tuesday: { start: "06:00", end: "22:00", available: true },
@@ -162,6 +256,8 @@ const sampleProviders = [
     name: "Vikram Singh",
     email: "vikram.singh@example.com",
     phone: "+91-9876543214",
+    dateOfBirth: new Date('1992-11-08'),
+    gender: 'male',
     address: {
       street: "654 FC Road",
       city: "Pune",
@@ -176,6 +272,28 @@ const sampleProviders = [
     bio: "Professional laundry and garment care specialist. Expert in fabric care and stain removal.",
     languages: ["Hindi", "English", "Marathi"],
     specializations: ["Laundry Service", "Dry Cleaning", "Stain Removal"],
+    verification: {
+      email: { isVerified: true, verifiedAt: new Date() },
+      phone: { isVerified: true, verifiedAt: new Date() },
+      panCard: { 
+        number: "WXYZ7890A",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      },
+      aadhar: { 
+        number: "5678-9012-3456",
+        isVerified: true, 
+        verifiedAt: new Date() 
+      }
+    },
+    documents: {
+      profileImage: "https://ui-avatars.com/api/?name=Vikram+Singh&background=000&color=fff",
+    },
+    emergencyContact: {
+      name: "Pooja Singh",
+      phone: "+91-9876543215",
+      relation: "Sister"
+    },
     availability: {
       monday: { start: "08:00", end: "18:00", available: true },
       tuesday: { start: "08:00", end: "18:00", available: true },

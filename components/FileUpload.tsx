@@ -10,6 +10,7 @@ interface FileUploadProps {
   accept?: string;
   maxSize?: number; // in MB
   multiple?: boolean;
+  disabled?: boolean;
 }
 
 export function FileUpload({ 
@@ -17,7 +18,8 @@ export function FileUpload({
   folder = 'maidease', 
   accept = 'image/*',
   maxSize = 5,
-  multiple = false 
+  multiple = false,
+  disabled = false
 }: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -84,13 +86,18 @@ export function FileUpload({
         accept={accept}
         multiple={multiple}
         onChange={handleFileSelect}
+        disabled={disabled}
         className="hidden"
       />
 
       {!preview ? (
         <div
-          onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+          onClick={() => !disabled && fileInputRef.current?.click()}
+          className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors ${
+            disabled 
+              ? 'cursor-not-allowed opacity-50' 
+              : 'cursor-pointer hover:border-gray-400'
+          }`}
         >
           <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
           <p className="text-sm text-gray-600 mb-2">

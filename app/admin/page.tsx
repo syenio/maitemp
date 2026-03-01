@@ -36,6 +36,30 @@ interface ServiceProvider {
   isVerified: boolean;
   isActive: boolean;
   createdAt: string;
+  providerId: string;
+  profileImage?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  documents?: {
+    profileImage?: string;
+    panCardImage?: string;
+    aadharImage?: string;
+  };
+  verification?: {
+    email?: { isVerified: boolean };
+    phone?: { isVerified: boolean };
+    panCard?: { isVerified: boolean };
+  };
+  qrCode?: {
+    hash: string;
+    imageUrl: string;
+    generatedAt: string;
+  };
+  specializations?: string[];
 }
 
 interface Booking {
@@ -623,73 +647,161 @@ export default function AdminDashboard() {
 
             {serviceProviders.length > 0 ? (
               <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Provider
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Contact
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Experience
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Rating
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Joined
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {serviceProviders.map((provider) => (
-                      <tr key={provider._id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{provider.name}</div>
-                            <div className="text-sm text-gray-500">{provider.services.length} services</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{provider.email}</div>
-                          <div className="text-sm text-gray-500">{provider.phone}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {provider.experience} years
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                            <span className="text-sm text-gray-900">{provider.rating.toFixed(1)}</span>
-                            <span className="text-sm text-gray-500 ml-1">({provider.totalReviews})</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex flex-col space-y-1">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              provider.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {provider.isVerified ? 'Verified' : 'Pending'}
-                            </span>
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              provider.isActive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
-                            }`}>
-                              {provider.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {new Date(provider.createdAt).toLocaleDateString()}
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Provider Details
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Contact & Location
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Experience & Rating
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Verification Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Provider ID & QR
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {serviceProviders.map((provider) => (
+                        <tr key={provider._id} className="hover:bg-gray-50">
+                          {/* Provider Details */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-12 w-12">
+                                {provider.profileImage || provider.documents?.profileImage ? (
+                                  <img
+                                    className="h-12 w-12 rounded-full object-cover"
+                                    src={provider.profileImage || provider.documents?.profileImage}
+                                    alt={provider.name}
+                                    onError={(e) => {
+                                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(provider.name)}&background=000&color=fff`;
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <span className="text-sm font-medium text-gray-700">
+                                      {provider.name.charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-gray-900">{provider.name}</div>
+                                <div className="text-sm text-gray-500">
+                                  {provider.services?.length || 0} services
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                  {provider.specializations?.slice(0, 2).join(', ')}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Contact & Location */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">{provider.email}</div>
+                            <div className="text-sm text-gray-500">{provider.phone}</div>
+                            <div className="text-xs text-gray-400">
+                              {provider.address?.city}, {provider.address?.state}
+                            </div>
+                          </td>
+
+                          {/* Experience & Rating */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm text-gray-900">{provider.experience} years</div>
+                            <div className="flex items-center">
+                              <Star className="w-4 h-4 text-yellow-400 mr-1" />
+                              <span className="text-sm text-gray-900">{provider.rating.toFixed(1)}</span>
+                              <span className="text-sm text-gray-500 ml-1">({provider.totalReviews})</span>
+                            </div>
+                          </td>
+
+                          {/* Verification Status */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex flex-col space-y-1">
+                              <div className="flex items-center space-x-2">
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  provider.verification?.email?.isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}>
+                                  Email
+                                </span>
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  provider.verification?.phone?.isVerified ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}>
+                                  Phone
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  provider.verification?.panCard?.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  PAN
+                                </span>
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  provider.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {provider.isVerified ? 'Verified' : 'Pending'}
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Provider ID & QR */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-mono text-gray-900">{provider.providerId}</div>
+                            {provider.qrCode?.imageUrl ? (
+                              <img
+                                src={provider.qrCode.imageUrl}
+                                alt="QR Code"
+                                className="w-8 h-8 mt-1"
+                              />
+                            ) : (
+                              <div className="w-8 h-8 bg-gray-200 rounded mt-1 flex items-center justify-center">
+                                <span className="text-xs text-gray-500">QR</span>
+                              </div>
+                            )}
+                            <div className="text-xs text-gray-400 mt-1">
+                              {new Date(provider.createdAt).toLocaleDateString()}
+                            </div>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div className="flex space-x-2">
+                              <button
+                                onClick={() => router.push(`/admin/service-providers/${provider._id}`)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                View
+                              </button>
+                              <button
+                                onClick={() => {
+                                  // Toggle verification status
+                                  // This would call an API to update verification
+                                }}
+                                className={`${
+                                  provider.isVerified ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900'
+                                }`}
+                              >
+                                {provider.isVerified ? 'Revoke' : 'Verify'}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ) : (
               <div className="bg-white rounded-lg shadow p-6 text-center">
