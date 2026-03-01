@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Clock, ArrowLeft, Search, MapPin } from 'lucide-react';
+import { Clock, ArrowLeft, Search, MapPin, ShoppingCart, Plus } from 'lucide-react';
 import { colors } from '@/lib/colors';
 
 interface Service {
@@ -21,6 +21,7 @@ export default function ServicesPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,6 +76,55 @@ export default function ServicesPage() {
       return;
     }
     router.push(`/booking/${serviceId}`);
+  };
+
+  const addToCart = async (serviceId: string) => {
+    if (!session) {
+      router.push('/auth/login');
+      return;
+    }
+
+    setAddingToCart(serviceId);
+    
+    try {
+      // For demo, use default scheduling - in production, show quick scheduling modal
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'user-id': 'demo-user-id', // In production, get from auth
+        },
+        body: JSON.stringify({
+          serviceId,
+          scheduledDate: tomorrow.toISOString().split('T')[0],
+          scheduledTime: '10:00',
+          address: {
+            street: 'Default Address',
+            city: selectedLocation || 'Mumbai',
+            state: 'Maharashtra',
+            zipCode: '400001',
+          },
+          quantity: 1,
+        }),
+      });
+
+      if (response.ok) {
+        alert('Service added to cart!');
+        // Refresh cart icon count
+        window.dispatchEvent(new Event('cartUpdated'));
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to add to cart');
+      }
+    } catch (error) {
+      console.error('Add to cart error:', error);
+      alert('Failed to add to cart');
+    } finally {
+      setAddingToCart(null);
+    }
   };
 
   return (
@@ -193,18 +243,39 @@ export default function ServicesPage() {
                     <div className="text-2xl font-bold text-gray-900">₹{service.price}</div>
                   </div>
                   
-                  <button
-                    onClick={() => handleBookService(service._id)}
-                    className="w-full py-2 px-4 rounded-md transition-colors font-medium"
-                    style={{ 
-                      backgroundColor: colors.primary[950],
-                      color: colors.text.inverse,
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary[800]}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary[950]}
-                  >
-                    Book Now
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => addToCart(service._id)}
+                      disabled={addingToCart === service._id}
+                      className="flex-1 py-2 px-4 rounded-md transition-colors font-medium border border-gray-300 hover:bg-gray-50 flex items-center justify-center"
+                      style={{ 
+                        color: colors.text.primary,
+                        backgroundColor: colors.background.primary,
+                      }}
+                    >
+                      {addingToCart === service._id ? (
+                        'Adding...'
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-4 h-4 mr-1" />
+                          Add to Cart
+                        </>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={() => handleBookService(service._id)}
+                      className="flex-1 py-2 px-4 rounded-md transition-colors font-medium"
+                      style={{ 
+                        backgroundColor: colors.primary[950],
+                        color: colors.text.inverse,
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary[800]}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary[950]}
+                    >
+                      Book Now
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

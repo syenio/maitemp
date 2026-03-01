@@ -15,6 +15,10 @@ const BookingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ServiceProvider',
   },
+  cartId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cart',
+  },
   scheduledDate: {
     type: Date,
     required: true,
@@ -26,6 +30,10 @@ const BookingSchema = new mongoose.Schema({
   duration: {
     type: Number,
     required: true,
+  },
+  quantity: {
+    type: Number,
+    default: 1,
   },
   totalAmount: {
     type: Number,

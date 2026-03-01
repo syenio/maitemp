@@ -16,11 +16,11 @@ import {
   Star,
   ChevronDown,
   Search,
-  MapPin,
-  Clock
+  MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { CartIcon } from '@/components/CartIcon';
 import { colors } from '@/lib/colors';
 
 export function Navbar() {
@@ -346,6 +346,9 @@ export function Navbar() {
                     </Badge>
                   )}
                 </button>
+
+                {/* Cart Icon */}
+                <CartIcon />
 
                 {/* Profile Dropdown */}
                 <div className="relative">
