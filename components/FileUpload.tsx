@@ -15,7 +15,7 @@ interface FileUploadProps {
 
 export function FileUpload({ 
   onUpload, 
-  folder = 'maidease', 
+  folder = 'maids-for-care', 
   accept = 'image/*',
   maxSize = 5,
   multiple = false,

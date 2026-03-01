@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadImage } from '@/lib/cloudinary';
+import { uploadImage } from '@/lib/r2';
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const folder = formData.get('folder') as string || 'maidease';
+    const folder = formData.get('folder') as string || 'maids-for-care';
 
     if (!file) {
       return NextResponse.json(
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       message: 'File uploaded successfully',
-      url: result.secure_url,
+      url: result.secure_url || result.url,
       publicId: result.public_id,
     });
   } catch (error) {

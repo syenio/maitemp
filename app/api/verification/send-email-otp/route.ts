@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     // In production, send actual email here
     // await emailService.send({
     //   to: email,
-    //   subject: 'MaidEase - Email Verification OTP',
+    //   subject: 'Maids for Care - Email Verification OTP',
     //   html: `Your verification OTP is: <strong>${otp}</strong>`
     // });
 

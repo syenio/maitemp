@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard - MaidEase",
-  description: "Admin panel for MaidEase platform",
+  title: "Admin Dashboard - Maids for Care",
+  description: "Admin panel for Maids for Care platform",
 };
 
 export default function AdminLayout({

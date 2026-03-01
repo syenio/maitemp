@@ -46,7 +46,7 @@ const slides: CarouselSlide[] = [
     id: 4,
     title: "Become a Service Provider",
     subtitle: "Join Our Network",
-    description: "Start your own business with MaidEase. Connect with customers and grow your service business.",
+    description: "Start your own business with Maids for Care. Connect with customers and grow your service business.",
     image: "/api/placeholder/800/400",
     cta: "Join as Provider",
     ctaLink: "/service-provider/register"

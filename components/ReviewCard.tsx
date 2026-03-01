@@ -105,7 +105,7 @@ export function ReviewCard({ review, showServiceInfo = false }: ReviewCardProps)
         <div className="bg-gray-50 rounded-lg p-4 mt-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-900">
-              Response from MaidEase
+              Response from Maids for Care
             </span>
             <span className="text-xs text-gray-500">
               {formatDate(review.adminResponse.respondedAt)}

@@ -29,7 +29,7 @@ export default function LoginPage() {
         <div>
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-2" style={colorStyles.textPrimary}>
-              MaidEase
+              Maids for Care
             </h1>
             <h2 className="text-3xl font-extrabold" style={colorStyles.textPrimary}>
               Welcome Back

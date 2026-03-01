@@ -195,7 +195,7 @@ export function TrustSection() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: colors.text.primary }}>
-            Why Choose MaidEase?
+            Why Choose Maids for Care?
           </h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: colors.text.secondary }}>
             We're committed to providing you with the best home service experience through our trusted network of professionals.

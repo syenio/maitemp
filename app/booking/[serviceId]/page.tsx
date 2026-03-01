@@ -162,7 +162,7 @@ export default function BookingPage() {
         key: paymentData.key,
         amount: paymentData.amount,
         currency: paymentData.currency,
-        name: 'MaidEase',
+        name: 'Maids for Care',
         description: `Payment for ${service.name}`,
         order_id: paymentData.orderId,
         handler: async function (response: any) {

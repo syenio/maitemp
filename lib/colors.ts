@@ -1,5 +1,5 @@
 /**
- * MaidEase Color System
+ * Maids for Care Color System
  * Centralized color configuration for consistent theming across the application
  */
 

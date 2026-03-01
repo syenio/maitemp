@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Hardcoded admin credentials
 const ADMIN_CREDENTIALS = {
-  email: process.env.ADMIN_EMAIL || 'admin@maidease.com',
+  email: process.env.ADMIN_EMAIL || 'admin@maidsforcare.com',
   password: process.env.ADMIN_PASSWORD || 'Admin@123456',
   name: 'System Administrator',
   role: 'admin',

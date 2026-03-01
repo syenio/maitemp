@@ -1,6 +1,6 @@
-# MaidEase Color System
+# Maids for Care Color System
 
-This document explains how to use the centralized color system in the MaidEase application.
+This document explains how to use the centralized color system in the Maids for Care application.
 
 ## Overview
 

@@ -117,7 +117,7 @@ export function Navbar() {
               onMouseEnter={(e) => e.currentTarget.style.color = colors.text.secondary}
               onMouseLeave={(e) => e.currentTarget.style.color = colors.text.primary}
             >
-              MaidEase
+              Maids for Care
             </button>
           </div>
 

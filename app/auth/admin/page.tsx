@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
                 type="email"
                 required
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-red-500 focus:border-red-500"
-                placeholder="admin@maidease.com"
+                placeholder="admin@maidsforcare.com"
                 value={formData.email}
                 onChange={handleChange}
               />
@@ -181,7 +181,7 @@ export default function AdminLoginPage() {
         <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
           <h3 className="text-sm font-medium text-yellow-800 mb-2">Development Credentials:</h3>
           <div className="text-xs text-yellow-700 space-y-1">
-            <p><strong>Email:</strong> admin@maidease.com</p>
+            <p><strong>Email:</strong> admin@maidsforcare.com</p>
             <p><strong>Password:</strong> Admin@123456</p>
             <p><strong>Secret Key:</strong> super-secret-admin-key-2024</p>
           </div>

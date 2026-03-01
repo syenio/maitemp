@@ -118,7 +118,7 @@ export function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5" style={{ color: colors.primary[400] }} />
-                <span style={{ color: colors.primary[300] }}>support@maidease.com</span>
+                <span style={{ color: colors.primary[300] }}>support@maidsforcare.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5" style={{ color: colors.primary[400] }} />

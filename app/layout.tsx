@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MaidEase - Professional Home Services",
+  title: "Maids for Care - Professional Home Services",
   description: "Book professional maid services for your home",
 };
 

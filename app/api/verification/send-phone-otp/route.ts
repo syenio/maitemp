@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     // In production, send actual SMS here
     // await smsService.send({
     //   to: phone,
-    //   message: `Your MaidEase verification OTP is: ${otp}`
+    //   message: `Your Maids for Care verification OTP is: ${otp}`
     // });
 
     return NextResponse.json({

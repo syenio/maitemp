@@ -21,7 +21,7 @@ const testimonials: Testimonial[] = [
     location: "Mumbai",
     service: "House Cleaning",
     rating: 5,
-    comment: "Excellent service! The cleaning lady was very professional and thorough. My house has never been cleaner. Highly recommend MaidEase for anyone looking for reliable home services.",
+    comment: "Excellent service! The cleaning lady was very professional and thorough. My house has never been cleaner. Highly recommend Maids for Care for anyone looking for reliable home services.",
     avatar: "PS"
   },
   {

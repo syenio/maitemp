@@ -29,13 +29,13 @@ export default function RegisterPage() {
         <div>
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-2" style={colorStyles.textPrimary}>
-              MaidEase
+              Maids for Care
             </h1>
             <h2 className="text-3xl font-extrabold" style={colorStyles.textPrimary}>
               Create Account
             </h2>
             <p className="mt-2 text-sm" style={colorStyles.textSecondary}>
-              Join MaidEase to book professional home services
+              Join Maids for Care to book professional home services
             </p>
           </div>
         </div>
