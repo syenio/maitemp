@@ -37,7 +37,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-black">
       {/* Hero Carousel */}
       <HeroCarousel />
 

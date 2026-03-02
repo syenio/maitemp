@@ -229,6 +229,7 @@ export default function AdminDashboard() {
               { id: 'providers', label: 'Service Providers' },
               { id: 'reviews', label: 'Reviews' },
               { id: 'carts', label: 'Cart Analytics' },
+              { id: 'carousel', label: 'Hero Carousel' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -949,6 +950,64 @@ export default function AdminDashboard() {
                 className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
               >
                 View Detailed Analytics
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Hero Carousel Tab */}
+        {activeTab === 'carousel' && (
+          <div>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Hero Carousel Management</h2>
+              <button
+                onClick={() => router.push('/admin/hero-carousel')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 flex items-center"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Manage Carousel
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <MessageSquare className="h-8 w-8 text-blue-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Slides</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Star className="h-8 w-8 text-green-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Active Slides</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center">
+                  <Star className="h-8 w-8 text-purple-600" />
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Views</p>
+                    <p className="text-2xl font-bold text-gray-900">0</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6 text-center">
+              <MessageSquare className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Dynamic Hero Carousel</h3>
+              <p className="text-gray-500 mb-4">Create and manage dynamic carousel slides with custom themes, images, and content.</p>
+              <button
+                onClick={() => router.push('/admin/hero-carousel')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+              >
+                Manage Carousel Slides
               </button>
             </div>
           </div>
