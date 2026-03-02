@@ -49,6 +49,8 @@ export function FileUpload({
       formData.append('file', file);
       formData.append('folder', folder);
 
+      console.log(`Uploading file: ${file.name} (${file.size} bytes)`);
+      
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
@@ -57,14 +59,28 @@ export function FileUpload({
       const data = await response.json();
 
       if (response.ok) {
+        console.log('Upload successful:', data.url);
         onUpload(data.url);
       } else {
-        alert(data.error || 'Upload failed');
+        console.error('Upload failed:', data);
+        const errorMsg = data.details || data.error || 'Upload failed';
+        
+        // Show more specific error messages
+        if (errorMsg.includes('R2 storage is not properly configured')) {
+          alert('Storage service is not configured. Please contact support.');
+        } else if (errorMsg.includes('SSL') || errorMsg.includes('handshake')) {
+          alert('Connection error. Please try again or contact support.');
+        } else if (errorMsg.includes('credentials')) {
+          alert('Authentication error. Please contact support.');
+        } else {
+          alert(errorMsg);
+        }
+        
         setPreview(null);
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Upload failed');
+      alert('Network error. Please check your connection and try again.');
       setPreview(null);
     } finally {
       setUploading(false);

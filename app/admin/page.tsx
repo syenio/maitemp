@@ -230,6 +230,7 @@ export default function AdminDashboard() {
               { id: 'reviews', label: 'Reviews' },
               { id: 'carts', label: 'Cart Analytics' },
               { id: 'carousel', label: 'Hero Carousel' },
+              { id: 'system', label: 'System Status' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1012,6 +1013,212 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
+        {/* System Status Tab */}
+        {activeTab === 'system' && (
+          <SystemStatusTab />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// System Status Component
+function SystemStatusTab() {
+  const [r2Status, setR2Status] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchR2Status();
+  }, []);
+
+  const fetchR2Status = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/admin/r2-status');
+      const data = await response.json();
+      setR2Status(data);
+    } catch (error) {
+      console.error('Error fetching R2 status:', error);
+      setR2Status({ error: 'Failed to fetch R2 status' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">System Status</h2>
+        <button
+          onClick={fetchR2Status}
+          className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+        >
+          Refresh Status
+        </button>
+      </div>
+
+      {/* R2 Storage Status */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center mb-4">
+          <Settings className="h-6 w-6 text-gray-600 mr-2" />
+          <h3 className="text-lg font-medium text-gray-900">Cloudflare R2 Storage</h3>
+        </div>
+
+        {r2Status?.error ? (
+          <div className="bg-red-50 border border-red-200 rounded-md p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">System Error</h3>
+                <p className="text-sm text-red-700 mt-1">{r2Status.error}</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Connection Status */}
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-gray-900">Connection Status</h4>
+                <p className="text-sm text-gray-600">
+                  {r2Status?.connection?.status === 'connected' ? 'Connected to R2' : 'Connection Failed'}
+                </p>
+              </div>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                r2Status?.connection?.status === 'connected' 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-red-100 text-red-800'
+              }`}>
+                {r2Status?.connection?.status === 'connected' ? 'Online' : 'Offline'}
+              </div>
+            </div>
+
+            {/* Environment Variables */}
+            <div>
+              <h4 className="font-medium text-gray-900 mb-3">Configuration</h4>
+              <div className="space-y-2">
+                {r2Status?.environment?.variables?.map((variable: any) => (
+                  <div key={variable.name} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                    <div>
+                      <span className="font-mono text-sm text-gray-900">{variable.name}</span>
+                      <p className="text-xs text-gray-600">{variable.value}</p>
+                    </div>
+                    <div className={`px-2 py-1 rounded text-xs font-medium ${
+                      variable.configured 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {variable.configured ? 'Set' : 'Missing'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            {r2Status?.recommendations && r2Status.recommendations.length > 0 && (
+              <div>
+                <h4 className="font-medium text-gray-900 mb-3">Recommendations</h4>
+                <div className="space-y-2">
+                  {r2Status.recommendations.map((rec: string, index: number) => (
+                    <div key={index} className={`p-3 rounded-lg border-l-4 ${
+                      rec.includes('properly configured') 
+                        ? 'bg-green-50 border-green-400 text-green-700'
+                        : 'bg-yellow-50 border-yellow-400 text-yellow-700'
+                    }`}>
+                      <p className="text-sm">{rec}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Additional Info */}
+            {r2Status?.connection?.objectCount !== undefined && (
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-medium text-blue-900">Storage Info</h4>
+                <p className="text-sm text-blue-700">
+                  Objects in bucket: {r2Status.connection.objectCount}
+                </p>
+              </div>
+            )}
+
+            {/* Setup Guide Link */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <h4 className="font-medium text-gray-900">Need Help?</h4>
+              <p className="text-sm text-gray-600 mb-2">
+                If you're having issues with R2 configuration, check our setup guide.
+              </p>
+              <a
+                href="/docs/R2_SETUP_GUIDE.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 hover:text-blue-800 underline"
+              >
+                View R2 Setup Guide
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Test Upload Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Test File Upload</h3>
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+          <div className="text-center">
+            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">
+                Upload a test image to verify R2 is working properly
+              </p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  formData.append('folder', 'test');
+                  
+                  try {
+                    const response = await fetch('/api/upload', {
+                      method: 'POST',
+                      body: formData,
+                    });
+                    
+                    const result = await response.json();
+                    if (response.ok) {
+                      alert(`Upload successful! URL: ${result.url}`);
+                    } else {
+                      alert(`Upload failed: ${result.error}`);
+                    }
+                  } catch (error) {
+                    alert(`Upload error: ${error}`);
+                  }
+                }}
+                className="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-900 file:text-white hover:file:bg-gray-800"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
