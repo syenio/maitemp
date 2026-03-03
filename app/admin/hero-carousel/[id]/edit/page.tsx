@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Save, Eye, Upload, Palette, Type, Link, Calendar, Users } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Upload, Palette, Type, Link, Calendar, Users, Plus, Trash2, GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -28,6 +28,19 @@ interface SlideData {
   startDate: string;
   endDate: string;
   targetAudience: string;
+  hasCards: boolean;
+  cards: CardData[];
+}
+
+interface CardData {
+  title: string;
+  description: string;
+  icon: string;
+  link: string;
+  backgroundColor: string;
+  textColor: string;
+  iconColor: string;
+  order: number;
 }
 
 export default function EditHeroSlidePage() {
@@ -50,6 +63,8 @@ export default function EditHeroSlidePage() {
     startDate: '',
     endDate: '',
     targetAudience: 'all',
+    hasCards: false,
+    cards: [],
   });
 
   const [loading, setLoading] = useState(true);
@@ -93,6 +108,56 @@ export default function EditHeroSlidePage() {
     { value: 'premium-users', label: 'Premium Users' },
   ];
 
+  const availableIcons = [
+    'Home', 'ChefHat', 'Baby', 'Shirt', 'Shield', 'Star', 'Clock', 'Users',
+    'CheckCircle', 'Heart', 'Zap', 'Award', 'Truck', 'Phone', 'MapPin',
+    'Calendar', 'CreditCard', 'Headphones', 'ThumbsUp', 'Gift'
+  ];
+
+  const addCard = () => {
+    const newCard: CardData = {
+      title: '',
+      description: '',
+      icon: 'Star',
+      link: '/services',
+      backgroundColor: '#ffffff',
+      textColor: '#000000',
+      iconColor: '#000000',
+      order: slideData.cards.length,
+    };
+    setSlideData(prev => ({
+      ...prev,
+      cards: [...prev.cards, newCard]
+    }));
+  };
+
+  const removeCard = (index: number) => {
+    setSlideData(prev => ({
+      ...prev,
+      cards: prev.cards.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateCard = (index: number, field: keyof CardData, value: string | number) => {
+    setSlideData(prev => ({
+      ...prev,
+      cards: prev.cards.map((card, i) => 
+        i === index ? { ...card, [field]: value } : card
+      )
+    }));
+  };
+
+  const moveCard = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= slideData.cards.length) return;
+
+    setSlideData(prev => {
+      const newCards = [...prev.cards];
+      [newCards[index], newCards[newIndex]] = [newCards[newIndex], newCards[index]];
+      return { ...prev, cards: newCards };
+    });
+  };
+
   useEffect(() => {
     fetchSlide();
   }, [slideId]);
@@ -123,6 +188,8 @@ export default function EditHeroSlidePage() {
           startDate: slide.startDate ? slide.startDate.split('T')[0] : '',
           endDate: slide.endDate ? slide.endDate.split('T')[0] : '',
           targetAudience: slide.targetAudience || 'all',
+          hasCards: slide.hasCards || false,
+          cards: slide.cards || [],
         });
       } else {
         alert('Slide not found');
@@ -145,6 +212,21 @@ export default function EditHeroSlidePage() {
     if (!slideData.title || !slideData.imageUrl) {
       alert('Title and image are required');
       return;
+    }
+
+    if (slideData.hasCards && slideData.cards.length === 0) {
+      alert('Please add at least one card or disable cards feature');
+      return;
+    }
+
+    if (slideData.hasCards) {
+      for (let i = 0; i < slideData.cards.length; i++) {
+        const card = slideData.cards[i];
+        if (!card.title || !card.description) {
+          alert(`Card ${i + 1}: Title and description are required`);
+          return;
+        }
+      }
     }
 
     setSaving(true);
@@ -527,6 +609,173 @@ export default function EditHeroSlidePage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Cards Feature */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    Feature Cards
+                  </div>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={slideData.hasCards}
+                      onChange={(e) => handleInputChange('hasCards', e.target.checked)}
+                    />
+                    <span className="text-sm font-medium text-gray-700">Enable Cards</span>
+                  </label>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {slideData.hasCards ? (
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-gray-600">
+                        Add feature cards that will be displayed over the carousel slide
+                      </p>
+                      <Button
+                        onClick={addCard}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Card
+                      </Button>
+                    </div>
+
+                    {slideData.cards.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No cards added yet. Click "Add Card" to get started.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {slideData.cards.map((card, index) => (
+                          <div key={index} className="border rounded-lg p-4 bg-gray-50">
+                            <div className="flex items-center justify-between mb-4">
+                              <h4 className="font-medium text-gray-900">Card {index + 1}</h4>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  onClick={() => moveCard(index, 'up')}
+                                  disabled={index === 0}
+                                  className="p-1 hover:bg-gray-200 rounded disabled:opacity-50"
+                                >
+                                  <GripVertical className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => removeCard(index)}
+                                  className="p-1 hover:bg-red-100 rounded text-red-600"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Title *
+                                </label>
+                                <Input
+                                  value={card.title}
+                                  onChange={(e) => updateCard(index, 'title', e.target.value)}
+                                  placeholder="Card title"
+                                  maxLength={100}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Icon
+                                </label>
+                                <select
+                                  value={card.icon}
+                                  onChange={(e) => updateCard(index, 'icon', e.target.value)}
+                                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                                >
+                                  {availableIcons.map((icon) => (
+                                    <option key={icon} value={icon}>
+                                      {icon}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+
+                            <div className="mt-4">
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Description *
+                              </label>
+                              <Textarea
+                                value={card.description}
+                                onChange={(e) => updateCard(index, 'description', e.target.value)}
+                                placeholder="Card description"
+                                rows={2}
+                                maxLength={200}
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Link
+                                </label>
+                                <Input
+                                  value={card.link}
+                                  onChange={(e) => updateCard(index, 'link', e.target.value)}
+                                  placeholder="/services"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Background Color
+                                </label>
+                                <input
+                                  type="color"
+                                  value={card.backgroundColor}
+                                  onChange={(e) => updateCard(index, 'backgroundColor', e.target.value)}
+                                  className="w-full h-10 border rounded-md"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 mt-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Text Color
+                                </label>
+                                <input
+                                  type="color"
+                                  value={card.textColor}
+                                  onChange={(e) => updateCard(index, 'textColor', e.target.value)}
+                                  className="w-full h-10 border rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Icon Color
+                                </label>
+                                <input
+                                  type="color"
+                                  value={card.iconColor}
+                                  onChange={(e) => updateCard(index, 'iconColor', e.target.value)}
+                                  className="w-full h-10 border rounded-md"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Enable cards to add feature cards that will be displayed over the carousel slide.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Preview */}
@@ -581,6 +830,40 @@ export default function EditHeroSlidePage() {
                             )}
                           </div>
                         </div>
+                        
+                        {/* Cards Preview */}
+                        {slideData.hasCards && slideData.cards.length > 0 && (
+                          <div className="absolute bottom-4 left-4 right-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                              {slideData.cards.slice(0, 3).map((card, index) => (
+                                <div
+                                  key={index}
+                                  className="p-3 rounded-lg shadow-lg"
+                                  style={{
+                                    backgroundColor: card.backgroundColor,
+                                    color: card.textColor,
+                                  }}
+                                >
+                                  <div className="flex items-center mb-2">
+                                    <div
+                                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-2"
+                                      style={{ backgroundColor: card.iconColor, color: card.backgroundColor }}
+                                    >
+                                      {card.icon.charAt(0)}
+                                    </div>
+                                    <h3 className="text-sm font-semibold truncate">{card.title}</h3>
+                                  </div>
+                                  <p className="text-xs opacity-90 line-clamp-2">{card.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                            {slideData.cards.length > 3 && (
+                              <p className="text-center text-xs text-white mt-2 opacity-75">
+                                +{slideData.cards.length - 3} more cards
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </>
                     ) : (
                       <div className="w-full h-full bg-gray-200 flex items-center justify-center">

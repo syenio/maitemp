@@ -46,6 +46,17 @@ interface HeroSlide {
   viewCount: number;
   createdAt: string;
   updatedAt: string;
+  hasCards?: boolean;
+  cards?: Array<{
+    title: string;
+    description: string;
+    icon: string;
+    link: string;
+    backgroundColor: string;
+    textColor: string;
+    iconColor: string;
+    order: number;
+  }>;
 }
 
 export default function HeroCarouselAdminPage() {
@@ -329,6 +340,11 @@ export default function HeroCarouselAdminPage() {
                               <Badge variant={slide.isActive ? 'default' : 'secondary'}>
                                 {slide.isActive ? 'Active' : 'Inactive'}
                               </Badge>
+                              {slide.hasCards && slide.cards && slide.cards.length > 0 && (
+                                <Badge variant="outline" className="text-blue-600 border-blue-600">
+                                  {slide.cards.length} Cards
+                                </Badge>
+                              )}
                             </div>
                             
                             {slide.subtitle && (

@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "node scripts/seed-services.js",
-    "seed-providers": "node scripts/seed-providers.js",
+    "seed-cards": "node scripts/seed-feature-cards.js",
     "setup-r2": "node scripts/setup-r2.js"
   },
   "dependencies": {

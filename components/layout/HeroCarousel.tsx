@@ -1,8 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Star, Shield, Clock, Users, Play, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, Shield, Clock, Users, Play, Pause, Home, ChefHat, Baby, Shirt, CheckCircle, Heart, Zap, Award, Truck, Phone, MapPin, Calendar, CreditCard, Headphones, ThumbsUp, Gift } from 'lucide-react';
 import { colors } from '@/lib/colors';
+
+// Icon mapping for dynamic icons
+const iconMap = {
+  Home, ChefHat, Baby, Shirt, Shield, Star, Clock, Users, CheckCircle, Heart, 
+  Zap, Award, Truck, Phone, MapPin, Calendar, CreditCard, Headphones, ThumbsUp, Gift
+};
 
 interface HeroSlide {
   _id: string;
@@ -22,16 +28,43 @@ interface HeroSlide {
   contentPosition: string;
   isActive: boolean;
   order: number;
+  hasCards?: boolean;
+  cards?: SlideCard[];
+}
+
+interface SlideCard {
+  title: string;
+  description: string;
+  icon: string;
+  link: string;
+  backgroundColor: string;
+  textColor: string;
+  iconColor: string;
+  order: number;
+}
+
+interface FeatureCard {
+  _id: string;
+  title: string;
+  description: string;
+  icon: string;
+  stat?: string;
+  isActive: boolean;
+  order: number;
+  iconColor: string;
+  textColor: string;
 }
 
 export function HeroCarousel() {
   const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [featureCards, setFeatureCards] = useState<FeatureCard[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchSlides();
+    fetchFeatureCards();
   }, []);
 
   useEffect(() => {
@@ -49,6 +82,7 @@ export function HeroCarousel() {
       const response = await fetch('/api/hero-carousel');
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched slides:', data.slides); // Debug log
         setSlides(data.slides);
         
         // Track view for first slide
@@ -64,6 +98,28 @@ export function HeroCarousel() {
       setLoading(false);
     }
   };
+
+  const fetchFeatureCards = async () => {
+    try {
+      const response = await fetch('/api/feature-cards?type=carousel-feature');
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched feature cards:', data.cards); // Debug log
+        setFeatureCards(data.cards);
+      }
+    } catch (error) {
+      console.error('Failed to fetch feature cards:', error);
+      // Fallback to default feature cards
+      setFeatureCards(getDefaultFeatureCards());
+    }
+  };
+
+  const getDefaultFeatureCards = (): FeatureCard[] => [
+    { _id: 'f1', title: 'Verified', description: 'Background checked', icon: 'Shield', stat: '100% Verified', isActive: true, order: 1, iconColor: colors.primary[950], textColor: colors.text.inverse },
+    { _id: 'f2', title: 'Rated 4.9/5', description: 'Customer satisfaction', icon: 'Star', stat: '4.9/5 Rating', isActive: true, order: 2, iconColor: colors.primary[950], textColor: colors.text.inverse },
+    { _id: 'f3', title: '24/7 Support', description: 'Always available', icon: 'Clock', stat: '24/7 Available', isActive: true, order: 3, iconColor: colors.primary[950], textColor: colors.text.inverse },
+    { _id: 'f4', title: '10k+ Customers', description: 'Trusted by many', icon: 'Users', stat: '10k+ Happy', isActive: true, order: 4, iconColor: colors.primary[950], textColor: colors.text.inverse }
+  ];
 
   const trackSlideInteraction = async (slideId: string, action: 'view' | 'click') => {
     try {
@@ -211,6 +267,11 @@ export function HeroCarousel() {
 
   const currentSlideData = slides[currentSlide];
 
+  // Debug logging in development
+  if (process.env.NODE_ENV === 'development' && currentSlideData) {
+    console.log('Current slide image URL:', currentSlideData.imageUrl);
+  }
+
   return (
     <div className="relative h-[600px] overflow-hidden">
       {/* Slides */}
@@ -225,9 +286,10 @@ export function HeroCarousel() {
           >
             {/* Background Image */}
             <div 
-              className="absolute inset-0 bg-cover bg-center"
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
               style={{ 
-                backgroundImage: `url(${slide.imageUrl})`,
+                backgroundImage: slide.imageUrl ? `url(${slide.imageUrl})` : 'none',
+                backgroundColor: slide.imageUrl ? 'transparent' : slide.backgroundColor,
               }}
             />
             
@@ -301,22 +363,38 @@ export function HeroCarousel() {
                   {/* Feature Cards */}
                   <div className="hidden lg:block">
                     <div className="grid grid-cols-2 gap-4">
-                      {[
-                        { icon: Shield, title: "Verified", desc: "Background checked" },
-                        { icon: Star, title: "Rated 4.9/5", desc: "Customer satisfaction" },
-                        { icon: Clock, title: "24/7 Support", desc: "Always available" },
-                        { icon: Users, title: "10k+ Customers", desc: "Trusted by many" }
-                      ].map((feature, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white/10 backdrop-blur-sm rounded-lg p-4"
-                          style={{ color: slide.textColor }}
-                        >
-                          <feature.icon className="w-8 h-8 mb-2" />
-                          <h3 className="font-semibold">{feature.title}</h3>
-                          <p className="text-sm opacity-80">{feature.desc}</p>
-                        </div>
-                      ))}
+                      {(() => {
+                        // Use slide-specific cards if available, otherwise use global feature cards
+                        const cardsToShow = slide.hasCards && slide.cards && slide.cards.length > 0 
+                          ? slide.cards.slice(0, 4)
+                          : (featureCards.length > 0 ? featureCards : getDefaultFeatureCards()).slice(0, 4);
+                        
+                        return cardsToShow.map((feature, idx) => {
+                          const IconComponent = iconMap[feature.icon as keyof typeof iconMap] || Shield;
+                          return (
+                            <div
+                              key={`${slide._id}-card-${idx}`}
+                              className="bg-white/10 backdrop-blur-sm rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
+                              style={{ color: slide.textColor }}
+                              onClick={() => {
+                                if ('link' in feature && feature.link) {
+                                  window.location.href = feature.link;
+                                }
+                              }}
+                            >
+                              <IconComponent 
+                                className="w-8 h-8 mb-2" 
+                                style={{ color: feature.iconColor || slide.textColor }} 
+                              />
+                              <h3 className="font-semibold">{feature.title}</h3>
+                              <p className="text-sm opacity-80">{feature.description}</p>
+                              {'stat' in feature && feature.stat && (
+                                <p className="text-xs font-medium mt-1 opacity-90">{feature.stat}</p>
+                              )}
+                            </div>
+                          );
+                        });
+                      })()}
                     </div>
                   </div>
                 </div>

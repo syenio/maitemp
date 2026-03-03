@@ -95,6 +95,51 @@ const HeroCarouselSchema = new mongoose.Schema({
     type: String,
     default: 'admin',
   },
+  hasCards: {
+    type: Boolean,
+    default: false,
+  },
+  cards: [{
+    title: {
+      type: String,
+      required: function() { return this.parent().hasCards; },
+      maxlength: 100,
+    },
+    description: {
+      type: String,
+      required: function() { return this.parent().hasCards; },
+      maxlength: 200,
+    },
+    icon: {
+      type: String,
+      required: function() { return this.parent().hasCards; },
+      enum: [
+        'Home', 'ChefHat', 'Baby', 'Shirt', 'Shield', 'Star', 'Clock', 'Users',
+        'CheckCircle', 'Heart', 'Zap', 'Award', 'Truck', 'Phone', 'MapPin',
+        'Calendar', 'CreditCard', 'Headphones', 'ThumbsUp', 'Gift'
+      ],
+    },
+    link: {
+      type: String,
+      default: '/services',
+    },
+    backgroundColor: {
+      type: String,
+      default: '#ffffff',
+    },
+    textColor: {
+      type: String,
+      default: '#000000',
+    },
+    iconColor: {
+      type: String,
+      default: '#000000',
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+  }],
 }, {
   timestamps: true,
 });

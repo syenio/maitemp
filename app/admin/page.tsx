@@ -230,7 +230,6 @@ export default function AdminDashboard() {
               { id: 'reviews', label: 'Reviews' },
               { id: 'carts', label: 'Cart Analytics' },
               { id: 'carousel', label: 'Hero Carousel' },
-              { id: 'system', label: 'System Status' },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -1013,11 +1012,6 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
-
-        {/* System Status Tab */}
-        {activeTab === 'system' && (
-          <SystemStatusTab />
-        )}
       </div>
     </div>
   );
@@ -1218,6 +1212,170 @@ function SystemStatusTab() {
               />
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Feature Cards Management Component
+function FeatureCardsTab() {
+  const [featureCards, setFeatureCards] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedType, setSelectedType] = useState('all');
+
+  useEffect(() => {
+    fetchFeatureCards();
+  }, []);
+
+  const fetchFeatureCards = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/admin/feature-cards');
+      const data = await response.json();
+      setFeatureCards(data.cards || []);
+    } catch (error) {
+      console.error('Error fetching feature cards:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredCards = selectedType === 'all' 
+    ? featureCards 
+    : featureCards.filter(card => card.type === selectedType);
+
+  const cardTypes = [
+    { value: 'all', label: 'All Cards' },
+    { value: 'service', label: 'Service Cards' },
+    { value: 'trust', label: 'Trust Cards' },
+    { value: 'carousel-feature', label: 'Carousel Features' },
+  ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900">Feature Cards Management</h2>
+        <div className="flex space-x-4">
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+          >
+            {cardTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={fetchFeatureCards}
+            className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      {/* Cards Grid */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredCards.map((card) => (
+          <div key={card._id} className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className={`px-2 py-1 rounded text-xs font-medium ${
+                  card.type === 'service' ? 'bg-blue-100 text-blue-800' :
+                  card.type === 'trust' ? 'bg-green-100 text-green-800' :
+                  'bg-purple-100 text-purple-800'
+                }`}>
+                  {card.type}
+                </div>
+                {card.popular && (
+                  <div className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">
+                    Popular
+                  </div>
+                )}
+              </div>
+              <div className={`px-2 py-1 rounded text-xs font-medium ${
+                card.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {card.isActive ? 'Active' : 'Inactive'}
+              </div>
+            </div>
+
+            <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
+            <p className="text-gray-600 text-sm mb-3">{card.description}</p>
+
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Icon:</span>
+                <span className="font-medium">{card.icon}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Order:</span>
+                <span className="font-medium">{card.order}</span>
+              </div>
+              {card.price && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Price:</span>
+                  <span className="font-medium">{card.price}</span>
+                </div>
+              )}
+              {card.stat && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Stat:</span>
+                  <span className="font-medium">{card.stat}</span>
+                </div>
+              )}
+            </div>
+
+            {card.features && card.features.length > 0 && (
+              <div className="mt-3">
+                <span className="text-gray-500 text-sm">Features:</span>
+                <ul className="mt-1 space-y-1">
+                  {card.features.map((feature: string, index: number) => (
+                    <li key={index} className="text-xs text-gray-600">• {feature}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="mt-4 pt-4 border-t flex justify-between text-xs text-gray-500">
+              <span>Created: {new Date(card.createdAt).toLocaleDateString()}</span>
+              <span>Updated: {new Date(card.updatedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredCards.length === 0 && (
+        <div className="text-center py-12">
+          <div className="text-gray-500 mb-4">No feature cards found</div>
+          <p className="text-sm text-gray-400">
+            {selectedType === 'all' 
+              ? 'Run the seed script to populate feature cards: npm run seed-feature-cards'
+              : `No ${selectedType} cards available`
+            }
+          </p>
+        </div>
+      )}
+
+      {/* Instructions */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 className="text-lg font-medium text-blue-900 mb-2">Feature Cards Management</h3>
+        <div className="text-sm text-blue-700 space-y-2">
+          <p><strong>Service Cards:</strong> Displayed on the home page service section</p>
+          <p><strong>Trust Cards:</strong> Shown in the "Why Choose Us" section</p>
+          <p><strong>Carousel Features:</strong> Small feature boxes displayed in the hero carousel</p>
+          <p className="mt-4"><strong>To populate cards:</strong> Run <code className="bg-blue-100 px-2 py-1 rounded">npm run seed-feature-cards</code></p>
         </div>
       </div>
     </div>
